@@ -1,0 +1,60 @@
+classDiagram
+    class Owner {
+        -String name
+        -Date birthday
+        -String email
+        -String number
+        +Owner(name, birthday, email, number)
+        +getName() String
+        +setName(name)
+        +getBirthday() Date
+        +setBirthday(birthday)
+        +getEmail() String
+        +setEmail(email)
+        +getNumber() String
+        +setNumber(number)
+    }
+
+    class Pet {
+        -String name
+        -Date birthday
+        -String animalType
+        -String medication
+        -int feedingFrequency
+        +Pet(name, birthday, animalType, feedingFrequency)
+        +getName() String
+        +setName(name)
+        +getBirthday() Date
+        +setBirthday(birthday)
+        +getAnimalType() String
+        +setAnimalType(animalType)
+        +getFeedingFrequency() int
+        +setFeedingFrequency(feedingFrequency)
+    }
+
+    class Task {
+        -String description
+        -int priorityLevel
+        -int duration
+        +Task(description, priorityLevel)
+        +getPriorityLevel() int
+        +setPriorityLevel(priorityLevel)
+        +addDailyTask(task)
+        +removeDailyTask(task)
+        +addMonthlyTask(task)
+        +removeMonthlyTask(task)
+    }
+
+    class Scheduler {
+        -List~Task~ schedule
+        -int groomingFrequency
+        -int walkFrequency
+        +Scheduler()
+        +organizeByDate()
+        +organizeByPriority()
+    }
+
+    Owner "1" *-- "*" Pet : has
+    Pet "1" --> "*" Task : requires
+    Owner "1" *-- "1" Scheduler : has
+    Scheduler "1" o-- "*" Task : organizes

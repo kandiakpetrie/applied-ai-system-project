@@ -1,0 +1,83 @@
+classDiagram
+    class Priority {
+        <<enumeration>>
+        LOW
+        MEDIUM
+        HIGH
+    }
+
+    class Frequency {
+        <<enumeration>>
+        ONCE
+        DAILY
+        WEEKLY
+        MONTHLY
+    }
+
+    class Owner {
+        +String name
+        +Date birthday
+        +String email
+        +String number
+        +List~Pet~ pets
+        +Scheduler scheduler
+        +add_pet(pet)
+        +remove_pet(pet)
+        +all_tasks() List~Task~
+        +pending_tasks() List~Task~
+        +filter_tasks(pet_name, completed) List~Task~
+    }
+
+    class Pet {
+        +String name
+        +Date birthday
+        +String animalType
+        +int feedingFrequency
+        +String medication
+        +List~Task~ tasks
+        +add_task(task)
+        +remove_task(task)
+        +pending_tasks() List~Task~
+        +needs_medication() bool
+    }
+
+    class Task {
+        +String description
+        +int duration
+        +Frequency frequency
+        +Priority priorityLevel
+        +bool completed
+        +Date dueDate
+        +Time dueTime
+        +mark_complete()
+        +mark_incomplete()
+        +is_recurring() bool
+        +next_occurrence() Task
+    }
+
+    class Scheduler {
+        +List~Task~ schedule
+        +int groomingFrequency
+        +int walkFrequency
+        +build_schedule(owner) List~Task~
+        +add_task(task)
+        +remove_task(task)
+        +organize_by_date() List~Task~
+        +sort_by_time() List~Task~
+        +organize_by_priority() List~Task~
+        +complete_task(task) Task
+        +pending_tasks() List~Task~
+        +next_task() Task
+        +total_time() int
+        +find_conflicts() List~List~Task~~
+        +has_conflicts() bool
+        +conflict_warning() String
+    }
+
+    Owner "1" *-- "*" Pet : has
+    Owner "1" *-- "1" Scheduler : has
+    Pet "1" *-- "*" Task : requires
+    Scheduler "1" o-- "*" Task : organizes
+    Scheduler ..> Owner : builds from
+    Task ..> Priority : uses
+    Task ..> Frequency : uses
