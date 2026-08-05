@@ -92,13 +92,21 @@ LOW_CONFIDENCE = 0.4
 logger = logging.getLogger("pawpal")
 
 
-def setup_logging(log_path: str = "pawpal.log", level: int = logging.INFO) -> None:
+def setup_logging(
+    log_path: str = "pawpal.log",
+    level: int = logging.INFO,
+    console: bool = True,
+) -> None:
     """Send PawPal's log records to ``log_path`` (and warnings to the console).
 
     Called by the entry points (`app.py`, `ask_pawpal.py`), never on import, so
     the log is a property of *running the app* rather than of importing a module.
     Idempotent: Streamlit re-runs its script constantly and must not stack up a
     new handler every time.
+
+    ``console=False`` keeps warnings out of stderr. The ``--demo`` transcript is
+    markdown meant to be pasted into documentation, and interleaved log lines
+    corrupt it — the records still reach the file either way.
     """
     if logger.handlers:
         return
@@ -111,12 +119,13 @@ def setup_logging(log_path: str = "pawpal.log", level: int = logging.INFO) -> No
     )
     logger.addHandler(file_handler)
 
-    # Warnings and errors also go to the console, so a failure is visible while
-    # you are using the app instead of only discoverable afterwards.
-    console = logging.StreamHandler()
-    console.setLevel(logging.WARNING)
-    console.setFormatter(logging.Formatter("%(levelname)s: %(message)s"))
-    logger.addHandler(console)
+    if console:
+        # Warnings and errors also go to the console, so a failure is visible
+        # while you are using the app instead of only discoverable afterwards.
+        stream = logging.StreamHandler()
+        stream.setLevel(logging.WARNING)
+        stream.setFormatter(logging.Formatter("%(levelname)s: %(message)s"))
+        logger.addHandler(stream)
 
 
 @dataclass

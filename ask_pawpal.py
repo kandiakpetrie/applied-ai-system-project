@@ -189,7 +189,9 @@ def run_demo(advisor, owner, scheduler):
 
 def main():
     demo = "--demo" in sys.argv
-    setup_logging()      # every question this session lands in pawpal.log
+    # Every question this session lands in pawpal.log. In --demo the console
+    # handler is off, so the emitted markdown stays clean enough to paste.
+    setup_logging(console=not demo)
 
     if not demo:
         print("PawPal+ Care Advisor (RAG)")

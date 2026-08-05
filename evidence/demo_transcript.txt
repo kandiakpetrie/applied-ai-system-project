@@ -6,7 +6,7 @@ $ python ask_pawpal.py --demo
 
 Knowledge base: CareKnowledgeBase — 5 file(s), 30 chunk(s), 455 indexed word(s)
 Demo state: Alice — 2 pet(s), 5 task(s), 5 pending
-LLM available: no (GEMINI_API_KEY not set)
+LLM available: yes
 
 
 ## Question 1: How many times a day should I feed my cat?
@@ -51,7 +51,38 @@ of marking them complete.
 
 **Sources:** FEEDING.md › Cats (score 6.30), MEDICATION.md › Timing and consistency (score 5.38), FEEDING.md › Feeding around medication (score 4.97)
 
-_Naive and RAG modes skipped: no `GEMINI_API_KEY` set._
+### Naive LLM (no retrieval)
+
+```text
+Hello! As a general rule, most adult cats do well being fed **twice a day**—usually once in the morning and once in the evening, about 10 to 12 hours apart. 
+
+However, the ideal feeding schedule depends a bit on your cat's age, lifestyle, and health needs:
+
+*   **Kittens:** Growing kittens have tiny stomachs and high energy needs, so they need to be fed much more frequently—usually **3 to 4 times a day** until they are about 6 months old.
+*   **Adult Cats (1+ years):** **Twice a day** is the standard. 
+*   **Senior Cats or Medical Needs:** Some older cats or cats with specific health conditions (like diabetes or kidney disease) may do better with smaller, more frequent meals throughout the day.
+
+**A Quick Tip:** 
+In the wild, cats naturally hunt 10 to 20 small meals a day. If your cat tends to "gobble and purge" (eat too fast and throw up) or constantly begs for food, you might consider switching them to **3 to 4 smaller meals** using timed automatic feeders, or using puzzle feeders to slow down their eating. 
+
+How old is your cat? If you share their age and lifestyle, I can give you a more tailored recommendation!
+```
+
+**Confidence:** 0.00 (none)
+
+**Sources:** none
+
+### RAG (retrieval + LLM)
+
+```text
+Adult cats do well on two to three small meals per day. Kittens under six months need three to four meals per day.
+
+Sources: FEEDING.md › Cats
+```
+
+**Confidence:** 0.74 (high)
+
+**Sources:** FEEDING.md › Cats (score 6.30), MEDICATION.md › Timing and consistency (score 5.38), FEEDING.md › Feeding around medication (score 4.97)
 
 
 ## Question 2: When should I fit a walk in around my current tasks?
@@ -94,7 +125,56 @@ high priority because a lapse restarts the protection window.
 
 **Sources:** FEEDING.md › Feeding around medication (score 4.97), EXERCISE.md › Dog walks (score 4.90), MEDICATION.md › Heartworm and flea prevention (score 2.88)
 
-_Naive and RAG modes skipped: no `GEMINI_API_KEY` set._
+### Naive LLM (no retrieval)
+
+```text
+As your pet care assistant, I’d love to help you crack this code! Finding the sweet spot for a walk can make a huge difference in both your dog’s behavior and your own productivity. 
+
+Instead of trying to force a walk into an already rigid schedule, the best approach is to look at **energy peaks, workflow rhythms, and natural transition times**. 
+
+Here is how you can figure out the best time to fit a walk into your current tasks:
+
+### 1. During Natural Work Breaks (The Pomodoro Method)
+If you work from home or have flexibility during the day, piggyback a walk onto breaks you should already be taking.
+*   **The Lunch Break:** This is the classic choice. Use the first or last 30 minutes of your lunch break to get outside. It gets you both some much-needed vitamin D and physical reset.
+*   **The "Deep Work" Transition:** If you finish a major, draining task, use a walk as your brain break before moving on to the next project. Physical movement helps clear cognitive fatigue.
+
+### 2. Match Your Dog’s Energy Peaks
+Dogs are usually most active at dawn and dusk (crepuscular by nature), but every dog has their own rhythm. 
+*   **If your dog is hyperactive in the morning:** A morning walk is non-negotiable. Tiring them out early means they will snooze while you start your workday, rather than pacing or begging for attention.
+*   **If your dog gets the "zoomies" in the late afternoon:** Schedule your walk around 4:00 or 5:00 PM. This is often the ultimate "witching hour" for dogs and humans alike—the dog burns off pent-up energy, and you get a clear boundary between the end of your workday and your evening.
+
+### 3. As a Productivity Tool (For You!)
+If you are struggling to start a difficult task, use the **"Walk First" rule**. 
+*   Take your dog for a brisk 15-to-20-minute walk *before* you sit down to tackle your most dreaded chore or work assignment. You’ll return with higher focus, less anxiety, and a dog who is ready to curl up and sleep quietly beside you.
+
+### 4. Avoid the "Wasted Energy" Traps
+Try to avoid walking your dog:
+*   Right after they’ve eaten a large meal (this can be dangerous, especially for medium-to-large breeds prone to bloat).
+*   During peak heat hours in the summer (check the pavement with the back of your hand—if it's too hot for you, it's too hot for their paws).
+*   Right when you are in a high-stress rush; dogs pick up on our anxiety, which can turn a relaxing walk into a frustrating tug-of-war.
+
+### The Bottom Line:
+If you have a high-energy dog, **morning is usually best** to set them up for a calm day. If you just need a mental health break, **mid-day or late afternoon** works wonders. 
+
+What does your daily schedule look like, and what kind of dog do you have? Tell me a bit more, and we can pinpoint the exact time slot that will work best for both of you!
+```
+
+**Confidence:** 0.00 (none)
+
+**Sources:** none
+
+### RAG (retrieval + LLM)
+
+```text
+Walking Buddy should wait roughly 30 minutes after a meal to reduce the risk of stomach upset. 
+
+Sources: EXERCISE.md › Dog walks
+```
+
+**Confidence:** 0.58 (medium)
+
+**Sources:** FEEDING.md › Feeding around medication (score 4.97), EXERCISE.md › Dog walks (score 4.90), MEDICATION.md › Heartworm and flea prevention (score 2.88)
 
 
 ## Question 3: What is the best pet insurance policy?
@@ -109,7 +189,51 @@ I do not know based on the pet care notes I have. I have notes on feeding, medic
 
 **Sources:** none
 
-_Naive and RAG modes skipped: no `GEMINI_API_KEY` set._
+### Naive LLM (no retrieval)
+
+```text
+Hello! As a pet care assistant, I’d love to help you with this, but the honest truth is that **there is no single "best" pet insurance policy for everyone.** 
+
+Because every pet, owner, and budget is different, the "best" policy is the one that best fits your specific needs. To help you find it, I recommend looking at pet insurance through three main categories:
+
+### 1. Types of Coverage Plans
+* **Accident & Illness (Most Popular):** Covers unexpected injuries (like swallowing a toy or breaking a bone) AND illnesses (like ear infections, allergies, cancer, and diabetes). This is what most people mean when they talk about pet insurance.
+* **Accident-Only:** Only covers sudden injuries. This is usually much cheaper and is often chosen for older pets who can no longer get illness coverage.
+* **Wellness/Routine Care (Usually an Add-On):** Covers predictable costs like annual exams, vaccines, flea/tick prevention, and dental cleanings. *Note: Pure insurance is meant for the unexpected; wellness add-ons are essentially prepaying for routine care, so do the math to see if it saves you money.*
+
+### 2. Key Factors to Compare
+When shopping around, don't just look at the monthly price. Look closely at these three levers, which affect your premium and out-of-pocket costs:
+* **Reimbursement Rate:** The percentage of the vet bill the company pays you back (usually ranges from 70% to 90%).
+* **Deductible:** The amount you must pay out-of-pocket *before* the insurance starts reimbursing you. (Some are annual deductibles; others are per-condition).
+* **Annual Limit:** The maximum amount the insurance company will pay out in a year (ranging from $3,000 to unlimited). Unlimited is best for major crises like cancer treatments.
+
+### 3. Crucial Rules to Remember
+* **Pre-Existing Conditions:** **No standard pet insurance company covers pre-existing conditions.** This is why it is best to insure your pet when they are young and healthy. If an issue happened *before* your policy started (or during the waiting period), it won't be covered.
+* **Waiting Periods:** Policies have waiting periods (e.g., 2 days for accidents, 14 days for illnesses, up to 6 months for cruciate ligament issues) before coverage kicks in.
+
+---
+
+### How to Find Your "Best" Policy:
+1. **List your priorities:** Are you most worried about breed-specific genetic issues, major accidents, or just keeping monthly costs low?
+2. **Get free quotes:** Use comparison sites or visit top-rated providers directly (popular ones in the US/Canada include *Trupanion, Healthy Paws, Lemonade, Embrace, and Nationwide*). Plug in your pet’s breed, age, and zip code.
+3. **Read the fine print:** Check the exclusions list before you buy so there are no surprises at the vet's office.
+
+If you'd like to share your pet's **species, breed, and age**, I can give you a better idea of what health issues to watch out for and what type of coverage might benefit them most!
+```
+
+**Confidence:** 0.00 (none)
+
+**Sources:** none
+
+### RAG (retrieval + LLM)
+
+```text
+I do not know based on the pet care notes I have. I have notes on feeding, medication, exercise, grooming, and vet visits.
+```
+
+**Confidence:** 0.00 (none)
+
+**Sources:** none
 
 
 ## Question 4: My cat is vomiting repeatedly, what is wrong?
@@ -152,7 +276,56 @@ cycle and helps a cat settle overnight.
 
 **Sources:** VET_AND_SAFETY.md › Call a vet the same day (score 2.20), FEEDING.md › Cats (score 4.10), EXERCISE.md › Cat play sessions (score 3.25)
 
-_Naive and RAG modes skipped: no `GEMINI_API_KEY` set._
+### Naive LLM (no retrieval)
 
-WARNING: mode=retrieval guard=refusal confidence=0.00 (none) sources=[-] q='What is the best pet insurance policy?'
-WARNING: mode=retrieval guard=health-escalation confidence=0.34 (low) sources=[VET_AND_SAFETY.md › Call a vet the same day, FEEDING.md › Cats, EXERCISE.md › Cat play sessions] q='My cat is vomiting repeatedly, what is wrong?'
+```text
+⚠️ **This sounds like a health question, not a scheduling one.** PawPal+ organises care tasks and cannot assess symptoms, diagnose, or advise on medication. Contact a veterinarian — same day for a symptom that is new or worsening, immediately for breathing trouble, collapse, seizures, or a suspected poison.
+
+As a pet care assistant, I need to tell you that **repeated vomiting in a cat is a medical concern that requires a veterinarian's attention.** 
+
+While a cat occasionally throwing up a hairball is normal, *repeated* vomiting (throwing up multiple times in a short period, or over the course of several days) is a sign that something is wrong. 
+
+### Why is this happening?
+There are many reasons cats vomit repeatedly, ranging from mild to life-threatening. Common causes include:
+*   **Ingesting something they shouldn't have:** This could be a toxic plant, human food, or a "foreign body" (like string, hair ties, or plastic) that is causing an intestinal blockage.
+*   **Dietary issues:** A sudden food change, food allergy, or spoiled food.
+*   **Hairballs:** Severe hairball buildup that they cannot pass or throw up successfully.
+*   **Parasites:** Intestinal worms.
+*   **Systemic illnesses:** Kidney disease, liver disease, pancreatitis, diabetes, or hyperthyroidism.
+*   **Infections:** Viral or bacterial infections of the gut.
+
+### What you should do right now:
+1.  **Contact your veterinarian immediately.** Explain that your cat is vomiting repeatedly and ask for an urgent appointment.
+2.  **Withhold food temporarily (if advised by your vet).** Often, vets recommend taking away food for a few hours to let the stomach settle, but do *not* withhold water unless instructed to.
+3.  **Monitor and save evidence.** If safe to do so, take a photo of the vomit. Note what it looks like (clear liquid, yellow bile, food, blood, or string). 
+4.  **Remove hazards.** Make sure your cat doesn't have access to any more string, toxic plants, or human foods while you wait to see the vet.
+
+### 🚨 Go to an Emergency Vet Immediately If:
+*   Your cat is vomiting blood or something that looks like coffee grounds.
+*   They are lethargic, weak, or unresponsive.
+*   They are straining to vomit continuously without producing anything.
+*   Their abdomen looks swollen or feels painful to the touch.
+*   They haven't been able to keep water down.
+*   You suspect they swallowed string, ribbon, or a linear foreign object (this is a surgical emergency).
+
+Please call your vet right away to get your kitty the help they need!
+```
+
+**Confidence:** 0.00 (none)
+
+**Sources:** none
+
+### RAG (retrieval + LLM)
+
+```text
+⚠️ **This sounds like a health question, not a scheduling one.** PawPal+ organises care tasks and cannot assess symptoms, diagnose, or advise on medication. Contact a veterinarian — same day for a symptom that is new or worsening, immediately for breathing trouble, collapse, seizures, or a suspected poison.
+
+I do not know based on the pet care notes I have.
+
+Sources: VET_AND_SAFETY.md
+```
+
+**Confidence:** 0.34 (low)
+
+**Sources:** VET_AND_SAFETY.md › Call a vet the same day (score 2.20), FEEDING.md › Cats (score 4.10), EXERCISE.md › Cat play sessions (score 3.25)
+

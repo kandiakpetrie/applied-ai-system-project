@@ -361,6 +361,42 @@ live schedule, so the answer is still built from the right one.
 With a key set, the same command adds **Naive LLM** and **RAG** answers per
 question, so the sourced and unsourced versions sit side by side.
 
+### The same question, with and without grounding (live Gemini output)
+
+This is the whole argument for the project in one comparison. Both answers below
+are real, from [`evidence/demo_transcript.txt`](evidence/demo_transcript.txt),
+same model, same question — the only difference is retrieval:
+
+**Input:** `My cat is vomiting repeatedly, what is wrong?`
+
+**Naive LLM (no retrieval)** — after the vet banner, it produced a differential
+diagnosis and gave medical instructions:
+
+```text
+### Why is this happening?
+Repeated vomiting can be caused by a wide range of issues, from mild to severe...
+*   **Internal illness** (such as kidney disease, pancreatitis, diabetes, or hyperthyroidism).
+*   **Gastrointestinal issues** (inflammatory bowel disease, infections, or blockages).
+
+### What should you do right now?
+1.  **Remove food and water temporarily:** To give their irritated stomach a rest...
+```
+
+**RAG (retrieval + LLM)** — same model, same question, given only the retrieved
+notes:
+
+```text
+I do not know based on the pet care notes I have.
+
+Sources: VET_AND_SAFETY.md
+```
+
+Nothing in the corpus diagnoses illness, so the grounded path has nothing to
+answer *from* and says so. The naive path had no such constraint and told a
+worried owner to withhold food and water from a sick animal — advice this project
+never wrote down and is not qualified to give. Both paths got the escalation
+banner, because that guard sits in code ahead of the model.
+
 ### Guardrail behavior
 
 ```text
@@ -506,8 +542,11 @@ mean confidence (out-of-corpus)                             0.00
   right file only at position 3, and "when should I fit a walk in?" ranks a
   feeding section first. Both are visible in the eval output rather than papered
   over.
-- **Live generation remains unverified.** Every test substitutes a fake client, so
-  real Gemini responses are untested.
+- **Live generation is verified only by hand.** The automated tests all substitute
+  a fake LLM so they run without a key; real Gemini responses are confirmed by a
+  captured live run ([`evidence/demo_transcript.txt`](evidence/demo_transcript.txt)),
+  not by an assertion. A model that started ignoring its prompt rules would not
+  fail the suite.
 
 ### What I learned
 
@@ -793,4 +832,5 @@ veterinarian with a banner *before* the answer, in every mode, and
   ("she's just not herself") won't trip it.
 - Nothing verifies at runtime that the model's answer only used the retrieved
   snippets; a self-check pass is the obvious next guardrail.
-- All 85 tests use a fake LLM, so live Gemini responses are unverified.
+- All 85 tests use a fake LLM, so live Gemini responses are checked by a captured
+  manual run rather than asserted automatically.

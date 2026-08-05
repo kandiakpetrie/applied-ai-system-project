@@ -57,9 +57,11 @@ model to use only the retrieved notes and to cite them; no code checks that it
 did. Of all the safeguards, the prompt rules are the only layer the model can
 simply ignore.
 
-**Generation is unverified against the live API.** All 85 tests substitute a fake
-LLM. Retrieval, guardrails, logging, and wiring are proven; actual Gemini
-responses are not.
+**Live generation is verified by hand, not automatically.** All 85 tests substitute
+a fake LLM so the suite runs without a key. The real Gemini path *has* been run and
+captured (`evidence/demo_transcript.txt`, 12 live calls), confirming that grounded
+answers cite their sections and that the refusal holds. But no assertion covers it,
+so a model that began ignoring its prompt rules would not fail the suite.
 
 ---
 
@@ -141,7 +143,17 @@ answer. Safety features interact; each one needs its own regression test.
 meaningless. Measuring the distribution and picking a divisor that saturated once
 took ten minutes and turned a decorative number into a useful one.
 
-**5. Refusals are hard to earn.** Before the score floor, "What is the best pet
+**5. The naive baseline was worse than I expected, and I have it on record.**
+Once a real API key was in place I ran the same symptom question through both
+paths. Naive mode produced a differential diagnosis — kidney disease,
+pancreatitis, inflammatory bowel disease — and instructed the owner to *remove
+food and water*. RAG, same model and same question, answered: "I do not know
+based on the pet care notes I have." I had been describing the naive mode as a
+rhetorical control condition; seeing it hand out medical instructions to a
+hypothetical worried owner made the case for grounding far more concrete than any
+metric did. Both captured in `evidence/demo_transcript.txt`.
+
+**6. Refusals are hard to earn.** Before the score floor, "What is the best pet
 insurance policy?" retrieved the grooming section on the strength of the single
 word "pet". Making a system say "I don't know" takes deliberate engineering; the
 default behavior of every layer is to produce *something*.
@@ -227,6 +239,7 @@ in by a human reviewer; the sheet ships pre-populated with system behavior only.
 | Confidence, in-corpus questions | mean 0.65 (range 0.27–1.00) |
 | Confidence, out-of-corpus questions | mean 0.00 — correct, no evidence exists |
 | Logging | every question records mode, guard, confidence, sources; API errors log with traceback |
+| Live generation | verified manually: 12 real Gemini calls captured in `evidence/demo_transcript.txt` |
 | Human evaluation | sheet generated; verdicts pending a reviewer |
 
 Full input → behavior → result documentation: [GUARDRAILS.md](GUARDRAILS.md).

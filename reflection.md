@@ -162,7 +162,8 @@ Prompts and question that focus on a piece of a section instead of just an entir
 Confident on the paths the tests cover, which is the whole public surface of
 `Scheduler` plus the `None`-valued edge cases. Two caveats I would state plainly:
 retrieval is only measured against 16 questions I wrote myself, and the live
-Gemini calls are not exercised anywhere — every test substitutes a fake client.
+Gemini calls are not asserted anywhere — every test substitutes a fake client,
+though I have run the live path once and captured it in evidence/.
 
 - What edge cases would you test next if you had more time?
 
@@ -281,8 +282,9 @@ safety notes to the front and prefixes a vet referral in every mode.
 - **Nothing verifies the model's output at runtime.** The prompt tells it to use
   only the retrieved notes and to cite them, but no code checks that it did. Of
   all the guardrails, the prompt rules are the only ones the model can ignore.
-- **Live generation is unverified.** Every test uses a fake LLM, so retrieval,
-  guardrails, and wiring are proven while the actual Gemini answers are not.
+- **Live generation isn't automatically checked.** Every test uses a fake LLM, so
+  retrieval, guardrails, and wiring are proven by assertion while the real Gemini
+  answers are only confirmed by a captured manual run.
 - **The stemmer is crude.** It produces non-words (`dose` → `dos`) and will fold
   unrelated words together. Tolerable, since queries and documents pass through
   the same function, but not linguistically correct.
