@@ -30,6 +30,12 @@ logger = logging.getLogger("pawpal")
 # One place to change the model for the whole project.
 GEMINI_MODEL_NAME = "gemini-flash-lite-latest"
 
+# Values that are present but not real keys. `.env.example` ships the first one,
+# and copying that file without editing it is the most likely setup mistake.
+PLACEHOLDER_KEYS = frozenset(
+    {"your_api_key_here", "your-api-key-here", "YOUR_API_KEY_HERE", "changeme"}
+)
+
 # Standing rules for every grounded answer. Kept separate from the question so
 # the prompt reads as: role -> rules -> evidence -> question.
 SYSTEM_RULES = """
@@ -53,13 +59,29 @@ class GeminiClient:
     """Thin wrapper around the Gemini model used for both answering modes."""
 
     def __init__(self, model_name: str = GEMINI_MODEL_NAME) -> None:
-        """Create a Gemini client, or raise ``RuntimeError`` if no key is set."""
-        api_key = os.getenv("GEMINI_API_KEY")
+        """Create a Gemini client, or raise ``RuntimeError`` if no usable key is set.
+
+        "Usable" excludes the placeholder shipped in ``.env.example``. Copying
+        that file to ``.env`` without editing it is the obvious first mistake, and
+        a non-empty placeholder would otherwise pass this check: the app would
+        report RAG as available, then fail on every single question with an auth
+        error. Failing here instead degrades cleanly to retrieval-only and says
+        exactly what to fix.
+        """
+        api_key = (os.getenv("GEMINI_API_KEY") or "").strip()
+
         if not api_key:
             raise RuntimeError(
                 "Missing GEMINI_API_KEY environment variable. "
                 "Add it to a .env file to enable RAG answers. "
                 "Retrieval-only mode works without it."
+            )
+        if api_key in PLACEHOLDER_KEYS:
+            raise RuntimeError(
+                f"GEMINI_API_KEY is still the placeholder value ({api_key!r}). "
+                "Your .env looks like an unedited copy of .env.example — replace "
+                "it with a real key from https://aistudio.google.com/apikey. "
+                "Retrieval-only mode works without one."
             )
 
         self.model_name = model_name

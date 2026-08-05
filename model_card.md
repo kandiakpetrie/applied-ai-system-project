@@ -57,7 +57,7 @@ model to use only the retrieved notes and to cite them; no code checks that it
 did. Of all the safeguards, the prompt rules are the only layer the model can
 simply ignore.
 
-**Generation is unverified against the live API.** All 82 tests substitute a fake
+**Generation is unverified against the live API.** All 85 tests substitute a fake
 LLM. Retrieval, guardrails, logging, and wiring are proven; actual Gemini
 responses are not.
 
@@ -220,7 +220,7 @@ in by a human reviewer; the sheet ships pre-populated with system behavior only.
 
 | Mechanism | Result |
 | --- | --- |
-| Automated tests | 82 passed, 0 failed (`pytest`) |
+| Automated tests | 85 passed, 0 failed (`pytest`) |
 | Retrieval eval — bare question | hit rate 1.00, top-1 0.93, 2/2 off-topic refused |
 | Retrieval eval — household context | hit rate 1.00, top-1 0.93, 2/2 off-topic refused |
 | Guardrail checks | 11/11 passed (exits non-zero on failure) |

@@ -9,6 +9,8 @@ schedule passed along?) without needing an API key or a network call.
 import logging
 import os
 import sys
+
+import pytest
 from datetime import date, time
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -505,6 +507,44 @@ def test_expanded_terms_come_from_the_owners_pets():
     assert "cat" in terms
     assert "Mochi" in terms
     assert "medication" in terms
+
+
+# --- API key handling -----------------------------------------------------
+
+def test_missing_api_key_disables_llm_modes(monkeypatch):
+    """No key means a clear RuntimeError, not a broken client."""
+    import llm_client
+
+    monkeypatch.delenv("GEMINI_API_KEY", raising=False)
+
+    with pytest.raises(RuntimeError, match="Missing GEMINI_API_KEY"):
+        llm_client.GeminiClient()
+
+
+def test_placeholder_api_key_is_rejected(monkeypatch):
+    """An unedited copy of .env.example must not look like a working setup.
+
+    Regression test. The placeholder is a non-empty string, so it passed the
+    original `if not api_key` check: the app reported RAG as available and then
+    failed on every question with an auth error. Rejecting it here degrades to
+    retrieval-only and names the actual problem.
+    """
+    import llm_client
+
+    monkeypatch.setenv("GEMINI_API_KEY", "your_api_key_here")
+
+    with pytest.raises(RuntimeError, match="still the placeholder"):
+        llm_client.GeminiClient()
+
+
+def test_whitespace_only_api_key_is_rejected(monkeypatch):
+    """A key of only spaces is missing, not present."""
+    import llm_client
+
+    monkeypatch.setenv("GEMINI_API_KEY", "   ")
+
+    with pytest.raises(RuntimeError, match="Missing GEMINI_API_KEY"):
+        llm_client.GeminiClient()
 
 
 # --- confidence scoring ---------------------------------------------------

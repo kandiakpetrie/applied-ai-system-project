@@ -347,6 +347,6 @@ human reviewer's judgement.
   answer actually only used the retrieved snippets. A self-check pass — a second
   call asking "is every claim supported by these snippets?" — is the obvious next
   guardrail.
-- **Generation is untested against the live API.** All 82 tests use a fake LLM,
+- **Generation is untested against the live API.** All 85 tests use a fake LLM,
   so the retrieval, guardrail, and wiring behavior is verified but the real
   Gemini responses are not.

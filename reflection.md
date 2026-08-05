@@ -134,7 +134,7 @@ Prompts and question that focus on a piece of a section instead of just an entir
    same-moment conflict detection and grouping; and recurring-task roll-forward
    through `next_occurrence()` / `complete_task()`.
 
-2) **RAG behaviors (45 tests, `tests/test_rag.py`)** — tokenizing and stemming;
+2) **RAG behaviors (48 tests, `tests/test_rag.py`)** — tokenizing and stemming;
    corpus loading and heading-based chunking; retrieval ranking, `top_k`, and the
    score floor; query expansion (both that it helps *and* that it cannot outvote
    the question); the three answering modes; that the snippets handed to the model
@@ -252,7 +252,7 @@ word list drives a safety guardrail.
 
 **e. Verification**
 
-The RAG layer has 45 tests that run without an API key, using a fake LLM that
+The RAG layer has 48 tests that run without an API key, using a fake LLM that
 records what it was asked. That lets me assert the *contract* — that the snippets
 handed to the model are exactly the ones retrieved, that the live schedule reaches
 the prompt, that an empty retrieval spends no API call — rather than just eyeballing
