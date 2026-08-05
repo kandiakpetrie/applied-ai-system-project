@@ -1,0 +1,218 @@
+$ python rag_evaluation.py
+# Same run with per-question retrieval detail.
+# exit code: 0
+----------------------------------------------------------------------
+CareKnowledgeBase — 5 file(s), 30 chunk(s), 455 indexed word(s)
+
+PawPal+ Retrieval Evaluation — bare question
+============================================================
+Questions:        16 (14 with expected sources)
+Hit rate:         1.00  (expected file appeared anywhere in top-k)
+Top-1 accuracy:   0.93  (best-ranked snippet was from an expected file)
+Out-of-corpus:    2/2 correctly retrieved nothing
+============================================================
+
+✅ How many times a day should I feed my cat? (top-1 ✓)
+   expected:  FEEDING.md
+   retrieved: FEEDING.md › Cats  (score 6.0)
+   retrieved: MEDICATION.md › Timing and consistency  (score 5.0)
+   retrieved: EXERCISE.md › Cat play sessions  (score 4.25)
+
+✅ How many meals does a puppy need? (top-1 ✓)
+   expected:  FEEDING.md
+   retrieved: FEEDING.md › Dogs  (score 2.75)
+   retrieved: EXERCISE.md › Dog walks  (score 2.0)
+
+✅ Should I walk my dog right after a meal? (top-1 ✓)
+   expected:  FEEDING.md, EXERCISE.md
+   retrieved: EXERCISE.md › Dog walks  (score 9.0)
+   retrieved: FEEDING.md › Dogs  (score 6.75)
+   retrieved: FEEDING.md › Cats  (score 2.25)
+
+✅ How long should I walk an adult dog each day? (top-1 ✓)
+   expected:  EXERCISE.md
+   retrieved: EXERCISE.md › Dog walks  (score 9.25)
+   retrieved: FEEDING.md › Dogs  (score 6.25)
+   retrieved: FEEDING.md › Cats  (score 3.5)
+
+✅ How often do cats need play sessions? (top-1 ✓)
+   expected:  EXERCISE.md
+   retrieved: EXERCISE.md › Cat play sessions  (score 9.75)
+   retrieved: FEEDING.md › Cats  (score 3.5)
+
+✅ What time should I give a twice daily medication? (top-1 ✓)
+   expected:  MEDICATION.md
+   retrieved: MEDICATION.md › Timing and consistency  (score 6.75)
+   retrieved: FEEDING.md › Feeding around medication  (score 4.25)
+   retrieved: FEEDING.md › Dogs  (score 2.0)
+
+✅ What do I do if I missed a dose? (top-1 ✓)
+   expected:  MEDICATION.md
+   retrieved: MEDICATION.md › Missed doses  (score 7.25)
+   retrieved: MEDICATION.md › Timing and consistency  (score 2.5)
+
+✅ How often is heartworm prevention given? (top-1 ✓)
+   expected:  MEDICATION.md
+   retrieved: MEDICATION.md › Heartworm and flea prevention  (score 7.25)
+
+✅ How often should I bathe my dog? (top-1 ✓)
+   expected:  GROOMING.md
+   retrieved: GROOMING.md › Bathing  (score 4.75)
+   retrieved: EXERCISE.md › Dog walks  (score 3.0)
+   retrieved: FEEDING.md › Dogs  (score 3.0)
+
+✅ How often do nails need trimming? (top-1 ✓)
+   expected:  GROOMING.md
+   retrieved: GROOMING.md › Nails  (score 3.5)
+
+✅ Should I brush my pet's teeth every day? (top-1 ✓)
+   expected:  GROOMING.md
+   retrieved: GROOMING.md › Teeth  (score 4.25)
+   retrieved: GROOMING.md › Brushing  (score 3.75)
+   retrieved: VET_AND_SAFETY.md › Call a vet the same day  (score 3.0)
+
+✅ When do I need to call a vet the same day? (top-1 ✓)
+   expected:  VET_AND_SAFETY.md
+   retrieved: VET_AND_SAFETY.md › Call a vet the same day  (score 12.0)
+   retrieved: FEEDING.md › Cats  (score 4.5)
+   retrieved: VET_AND_SAFETY.md › Routine vet visits  (score 3.0)
+
+✅ Is chocolate dangerous for dogs?
+   expected:  VET_AND_SAFETY.md
+   retrieved: EXERCISE.md › Dog walks  (score 3.0)
+   retrieved: FEEDING.md › Dogs  (score 3.0)
+   retrieved: VET_AND_SAFETY.md › Common household hazards  (score 2.0)
+
+✅ Can I bathe my dog after a flea treatment? (top-1 ✓)
+   expected:  GROOMING.md, GROOMING.md, MEDICATION.md
+   retrieved: GROOMING.md › Bathing  (score 6.75)
+   retrieved: EXERCISE.md › Dog walks  (score 4.0)
+   retrieved: FEEDING.md › Dogs  (score 4.0)
+
+✅ What is the best pet insurance policy? (top-1 ✓)
+   expected:  (none — should refuse)
+   retrieved: (nothing)
+
+✅ How do I train my parrot to talk? (top-1 ✓)
+   expected:  (none — should refuse)
+   retrieved: (nothing)
+
+PawPal+ Retrieval Evaluation — with household context (what the app does)
+============================================================
+Questions:        16 (14 with expected sources)
+Hit rate:         1.00  (expected file appeared anywhere in top-k)
+Top-1 accuracy:   0.93  (best-ranked snippet was from an expected file)
+Out-of-corpus:    2/2 correctly retrieved nothing
+============================================================
+
+✅ How many times a day should I feed my cat? (top-1 ✓)
+   expected:  FEEDING.md
+   retrieved: FEEDING.md › Cats  (score 6.3)
+   retrieved: MEDICATION.md › Timing and consistency  (score 5.38)
+   retrieved: FEEDING.md › Feeding around medication  (score 4.97)
+
+✅ How many meals does a puppy need? (top-1 ✓)
+   expected:  FEEDING.md
+   retrieved: FEEDING.md › Dogs  (score 3.65)
+   retrieved: EXERCISE.md › Dog walks  (score 2.9)
+   retrieved: FEEDING.md › Cats  (score 2.6)
+
+✅ Should I walk my dog right after a meal? (top-1 ✓)
+   expected:  FEEDING.md, EXERCISE.md
+   retrieved: EXERCISE.md › Dog walks  (score 9.0)
+   retrieved: FEEDING.md › Dogs  (score 6.75)
+   retrieved: FEEDING.md › Cats  (score 3.3)
+
+✅ How long should I walk an adult dog each day? (top-1 ✓)
+   expected:  EXERCISE.md
+   retrieved: EXERCISE.md › Dog walks  (score 9.25)
+   retrieved: FEEDING.md › Dogs  (score 6.25)
+   retrieved: FEEDING.md › Cats  (score 4.55)
+
+✅ How often do cats need play sessions? (top-1 ✓)
+   expected:  EXERCISE.md
+   retrieved: EXERCISE.md › Cat play sessions  (score 9.75)
+   retrieved: FEEDING.md › Cats  (score 3.8)
+
+✅ What time should I give a twice daily medication? (top-1 ✓)
+   expected:  MEDICATION.md
+   retrieved: MEDICATION.md › Timing and consistency  (score 6.75)
+   retrieved: FEEDING.md › Feeding around medication  (score 4.25)
+   retrieved: FEEDING.md › Dogs  (score 2.9)
+
+✅ What do I do if I missed a dose? (top-1 ✓)
+   expected:  MEDICATION.md
+   retrieved: MEDICATION.md › Missed doses  (score 7.25)
+   retrieved: MEDICATION.md › Heartworm and flea prevention  (score 2.88)
+   retrieved: MEDICATION.md › Timing and consistency  (score 2.88)
+
+✅ How often is heartworm prevention given? (top-1 ✓)
+   expected:  MEDICATION.md
+   retrieved: MEDICATION.md › Heartworm and flea prevention  (score 7.25)
+
+✅ How often should I bathe my dog? (top-1 ✓)
+   expected:  GROOMING.md
+   retrieved: GROOMING.md › Bathing  (score 5.05)
+   retrieved: EXERCISE.md › Dog walks  (score 3.0)
+   retrieved: FEEDING.md › Dogs  (score 3.0)
+
+✅ How often do nails need trimming? (top-1 ✓)
+   expected:  GROOMING.md
+   retrieved: GROOMING.md › Nails  (score 3.5)
+
+✅ Should I brush my pet's teeth every day? (top-1 ✓)
+   expected:  GROOMING.md
+   retrieved: GROOMING.md › Teeth  (score 4.85)
+   retrieved: GROOMING.md › Brushing  (score 4.05)
+   retrieved: VET_AND_SAFETY.md › Call a vet the same day  (score 3.0)
+
+✅ When do I need to call a vet the same day? (top-1 ✓)
+   expected:  VET_AND_SAFETY.md
+   retrieved: VET_AND_SAFETY.md › Call a vet the same day  (score 12.0)
+   retrieved: FEEDING.md › Cats  (score 5.85)
+   retrieved: MEDICATION.md › Heartworm and flea prevention  (score 3.88)
+
+✅ Is chocolate dangerous for dogs?
+   expected:  VET_AND_SAFETY.md
+   retrieved: EXERCISE.md › Dog walks  (score 3.0)
+   retrieved: FEEDING.md › Dogs  (score 3.0)
+   retrieved: VET_AND_SAFETY.md › Common household hazards  (score 2.67)
+
+✅ Can I bathe my dog after a flea treatment? (top-1 ✓)
+   expected:  GROOMING.md, GROOMING.md, MEDICATION.md
+   retrieved: GROOMING.md › Bathing  (score 7.05)
+   retrieved: MEDICATION.md › Heartworm and flea prevention  (score 4.88)
+   retrieved: EXERCISE.md › Dog walks  (score 4.0)
+
+✅ What is the best pet insurance policy? (top-1 ✓)
+   expected:  (none — should refuse)
+   retrieved: (nothing)
+
+✅ How do I train my parrot to talk? (top-1 ✓)
+   expected:  (none — should refuse)
+   retrieved: (nothing)
+
+Guardrail checks: 11/11 passed
+============================================================
+| Input                                         | Expected   | Actual     | ✓ |
+| --------------------------------------------- | ---------- | ---------- | - |
+|                                               | rejected   | rejected   | ✅ |
+|                                               | rejected   | rejected   | ✅ |
+| aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa... | rejected   | rejected   | ✅ |
+| What is the best pet insurance policy?        | refused    | refused    | ✅ |
+| How do I train my parrot to talk?             | refused    | refused    | ✅ |
+| My cat is vomiting repeatedly, what is wrong? | escalated  | escalated  | ✅ |
+| My dog ate chocolate!                         | escalated  | escalated  | ✅ |
+| She collapsed and is breathing strangely      | escalated  | escalated  | ✅ |
+| How often should I bathe a dog?               | answered   | answered   | ✅ |
+| What time should I give a twice daily medi... | answered   | answered   | ✅ |
+| How many times a day should I feed my cat?    | answered   | answered   | ✅ |
+
+Summary
+------------------------------------------------------------
+arm                                 hit rate     top-1   refused
+bare question                           1.00      0.93       2/2
+with household context                  1.00      0.93       2/2
+guardrail checks                                           11/11
+mean confidence (in-corpus)                                 0.65
+mean confidence (out-of-corpus)                             0.00

@@ -1,0 +1,115 @@
+%% PawPal+ system architecture — data flow from input to output.
+%%
+%% Every node maps to real code in this repo (file:function shown in the label).
+%% The UML class diagrams in uml_final.mmd describe the data model; this diagram
+%% describes what happens to a request as it moves through the system.
+flowchart TD
+    subgraph INPUT["1 · INPUT"]
+        UI["Streamlit UI<br/>app.py"]
+        CLI["CLI<br/>ask_pawpal.py · main.py"]
+    end
+
+    subgraph STATE["2 · APPLICATION STATE (pawpal_system.py)"]
+        OWNER["Owner · Pet · Task<br/>dataclasses"]
+        SCHED["Scheduler<br/>organize_by_priority()<br/>find_conflicts()"]
+    end
+
+    subgraph RAG["3 · RAG PIPELINE"]
+        VALIDATE{"Question<br/>non-empty?<br/>care_advisor.ask()"}
+        EXPAND["Query expansion<br/>care_advisor.expanded_terms()<br/>adds species, pet name, medication"]
+        TOKEN["Tokenize + stem<br/>care_kb.tokenize()<br/>drop stopwords, fold cat/cats"]
+        INDEX[("Inverted index<br/>care_kb.build_index()<br/>word → chunk ids")]
+        SCORE["Score candidates<br/>care_kb.score_chunk()<br/>coverage + heading + repetition"]
+        FLOOR{"score ≥ MIN_SCORE?<br/>care_kb.retrieve()"}
+        CTX["Build schedule context<br/>care_advisor.schedule_context()<br/>pets, pending tasks, conflicts"]
+        PROMPT["Assemble grounded prompt<br/>llm_client.SYSTEM_RULES<br/>+ snippets + schedule context"]
+        LLM["Gemini<br/>llm_client.answer_from_snippets()"]
+    end
+
+    subgraph CORPUS["KNOWLEDGE CORPUS"]
+        DOCS[("knowledge/*.md<br/>FEEDING · MEDICATION · EXERCISE<br/>GROOMING · VET_AND_SAFETY")]
+        CHUNK["Chunk by ## heading<br/>care_kb.build_chunks()<br/>5 files → 30 sections"]
+    end
+
+    subgraph OUTPUT["4 · OUTPUT"]
+        ANSWER["CareAnswer<br/>text + snippets + sources"]
+        REFUSE["Refusal<br/>'I do not know based on<br/>the pet care notes I have.'"]
+        PLAN["Sorted schedule<br/>+ conflict warning"]
+    end
+
+    subgraph EVAL["RELIABILITY — AUTOMATED (offline, no API key)"]
+        EVALUATE["rag_evaluation.py<br/>hit rate · top-1 · guardrails<br/>confidence calibration"]
+        TESTS["tests/test_rag.py + tests/test_pawpal.py<br/>82 tests · FakeLLM"]
+        LOGS[("pawpal.log<br/>mode · guard · confidence<br/>sources · API errors")]
+    end
+
+    subgraph HUMAN["RELIABILITY — HUMAN IN THE LOOP"]
+        CITE["Owner reads the cited sections<br/>app.py source expanders<br/>label + score per snippet"]
+        CONF["Owner sees confidence<br/>CareAnswer.confidence<br/>low score → 'check the sources'"]
+        VET["Owner is routed to a vet<br/>escalation banner<br/>the human decides, not the app"]
+        REVIEW["Reviewer scores sample answers<br/>human_eval.md<br/>good / partial / bad"]
+    end
+
+    %% --- input paths ---
+    UI -->|"owner, pet, task inputs"| OWNER
+    CLI -->|"demo owner + pets"| OWNER
+    OWNER --> SCHED
+    SCHED -->|"ordered tasks"| PLAN
+
+    UI -->|"question + mode + top_k"| VALIDATE
+    CLI -->|"question + mode"| VALIDATE
+    VALIDATE -->|"empty → prompt to ask"| REFUSE
+
+    %% --- retrieve ---
+    VALIDATE -->|"question"| EXPAND
+    OWNER -.->|"species, medication"| EXPAND
+    EXPAND --> TOKEN
+    DOCS --> CHUNK
+    CHUNK --> INDEX
+    TOKEN -->|"stemmed query words"| INDEX
+    INDEX -->|"candidate chunks"| SCORE
+    SCORE --> FLOOR
+    FLOOR -->|"nothing passes the floor"| REFUSE
+
+    %% --- augment ---
+    FLOOR -->|"top-k snippets"| PROMPT
+    OWNER --> CTX
+    SCHED -->|"pending tasks, conflicts"| CTX
+    CTX -->|"live schedule state"| PROMPT
+
+    %% --- generate ---
+    PROMPT --> LLM
+    LLM -->|"grounded answer + citations"| ANSWER
+    LLM -->|"notes insufficient"| REFUSE
+    FLOOR -.->|"retrieval-only mode:<br/>skip the LLM entirely"| ANSWER
+
+    %% --- automated checking of AI results ---
+    CHUNK -.-> EVALUATE
+    EVALUATE -.->|"tune score_chunk(), MIN_SCORE,<br/>BOOST_WEIGHT"| SCORE
+    TESTS -.-> FLOOR
+    TESTS -.-> CTX
+    ANSWER -.->|"every question:<br/>mode, guard, confidence"| LOGS
+    LLM -.->|"API errors + empty responses"| LOGS
+
+    %% --- human checking of AI results ---
+    %% The system never asks the owner to trust it: each answer arrives with the
+    %% sections it used, a confidence score, and (for health questions) a
+    %% redirect to a professional.
+    ANSWER --> CITE
+    ANSWER --> CONF
+    REFUSE --> VET
+    CITE -->|"reads the source, judges the answer"| OWNER
+    CONF -.->|"low confidence → verify before acting"| CITE
+    ANSWER -.->|"sampled answers"| REVIEW
+    REVIEW -.->|"verdicts feed corpus + scoring fixes"| DOCS
+
+    classDef guard fill:#fff3cd,stroke:#b8860b,stroke-width:2px,color:#000
+    classDef out fill:#d4edda,stroke:#28a745,color:#000
+    classDef refuse fill:#f8d7da,stroke:#dc3545,color:#000
+    classDef store fill:#e7e7ff,stroke:#5555aa,color:#000
+    classDef human fill:#e0f0ff,stroke:#0066cc,stroke-width:2px,color:#000
+    class VALIDATE,FLOOR guard
+    class ANSWER,PLAN out
+    class REFUSE refuse
+    class DOCS,INDEX,LOGS store
+    class CITE,CONF,VET,REVIEW human

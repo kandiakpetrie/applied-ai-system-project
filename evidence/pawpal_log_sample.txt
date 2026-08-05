@@ -1,0 +1,8 @@
+# Tail of pawpal.log — one record per question asked.
+# Written automatically by care_advisor; guard firings log at WARNING.
+----------------------------------------------------------------------
+
+2026-08-04 21:45:09,420 INFO     mode=retrieval guard=none confidence=0.74 (high) sources=[FEEDING.md › Cats, MEDICATION.md › Timing and consistency, FEEDING.md › Feeding around medication] q='How many times a day should I feed my cat?'
+2026-08-04 21:45:09,421 INFO     mode=retrieval guard=none confidence=0.58 (medium) sources=[FEEDING.md › Feeding around medication, EXERCISE.md › Dog walks, MEDICATION.md › Heartworm and flea prevention] q='When should I fit a walk in around my current tasks?'
+2026-08-04 21:45:09,422 WARNING  mode=retrieval guard=refusal confidence=0.00 (none) sources=[-] q='What is the best pet insurance policy?'
+2026-08-04 21:45:09,423 WARNING  mode=retrieval guard=health-escalation confidence=0.34 (low) sources=[VET_AND_SAFETY.md › Call a vet the same day, FEEDING.md › Cats, EXERCISE.md › Cat play sessions] q='My cat is vomiting repeatedly, what is wrong?'

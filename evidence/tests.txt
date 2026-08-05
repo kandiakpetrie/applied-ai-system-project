@@ -1,0 +1,16 @@
+$ python -m pytest
+# Full automated test suite (scheduler + RAG layer).
+# exit code: 0
+----------------------------------------------------------------------
+============================= test session starts ==============================
+platform darwin -- Python 3.13.7, pytest-9.0.3, pluggy-1.6.0
+rootdir: /Users/kandiakpetrie/CodePath/applied-ai-system-project
+configfile: pytest.ini
+plugins: anyio-4.13.0
+collected 82 items
+
+test_pawpal.py ..                                                        [  2%]
+tests/test_pawpal.py ...................................                 [ 45%]
+tests/test_rag.py .............................................          [100%]
+
+============================== 82 passed in 0.14s ==============================

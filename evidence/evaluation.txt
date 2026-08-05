@@ -1,0 +1,46 @@
+$ python rag_evaluation.py --quiet
+# Retrieval evaluation (both arms) plus the guardrail checks.
+# exit code: 0
+----------------------------------------------------------------------
+CareKnowledgeBase — 5 file(s), 30 chunk(s), 455 indexed word(s)
+
+PawPal+ Retrieval Evaluation — bare question
+============================================================
+Questions:        16 (14 with expected sources)
+Hit rate:         1.00  (expected file appeared anywhere in top-k)
+Top-1 accuracy:   0.93  (best-ranked snippet was from an expected file)
+Out-of-corpus:    2/2 correctly retrieved nothing
+============================================================
+
+PawPal+ Retrieval Evaluation — with household context (what the app does)
+============================================================
+Questions:        16 (14 with expected sources)
+Hit rate:         1.00  (expected file appeared anywhere in top-k)
+Top-1 accuracy:   0.93  (best-ranked snippet was from an expected file)
+Out-of-corpus:    2/2 correctly retrieved nothing
+============================================================
+
+Guardrail checks: 11/11 passed
+============================================================
+| Input                                         | Expected   | Actual     | ✓ |
+| --------------------------------------------- | ---------- | ---------- | - |
+|                                               | rejected   | rejected   | ✅ |
+|                                               | rejected   | rejected   | ✅ |
+| aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa... | rejected   | rejected   | ✅ |
+| What is the best pet insurance policy?        | refused    | refused    | ✅ |
+| How do I train my parrot to talk?             | refused    | refused    | ✅ |
+| My cat is vomiting repeatedly, what is wrong? | escalated  | escalated  | ✅ |
+| My dog ate chocolate!                         | escalated  | escalated  | ✅ |
+| She collapsed and is breathing strangely      | escalated  | escalated  | ✅ |
+| How often should I bathe a dog?               | answered   | answered   | ✅ |
+| What time should I give a twice daily medi... | answered   | answered   | ✅ |
+| How many times a day should I feed my cat?    | answered   | answered   | ✅ |
+
+Summary
+------------------------------------------------------------
+arm                                 hit rate     top-1   refused
+bare question                           1.00      0.93       2/2
+with household context                  1.00      0.93       2/2
+guardrail checks                                           11/11
+mean confidence (in-corpus)                                 0.65
+mean confidence (out-of-corpus)                             0.00

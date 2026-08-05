@@ -1,7 +1,22 @@
 from datetime import date, time
 
+from dotenv import load_dotenv
+
+# Load GEMINI_API_KEY from .env before anything tries to construct an LLM client.
+load_dotenv()
+
 import streamlit as st
 from  pawpal_system import Task, Pet, Owner, Priority, Frequency, Scheduler
+from care_advisor import (
+    ESCALATION_BANNER,
+    LOW_CONFIDENCE,
+    MODE_NAIVE,
+    MODE_RAG,
+    MODE_RETRIEVAL,
+    CareAdvisor,
+    setup_logging,
+)
+from care_kb import CareKnowledgeBase
 
 st.set_page_config(page_title="PawPal+", page_icon="🐾", layout="centered")
 
@@ -269,3 +284,158 @@ if st.button("Generate schedule"):
             st.warning(warning)
     else:
         st.info("No tasks to schedule yet. Add some tasks above.")
+
+st.divider()
+
+# =========================================================================
+# Ask PawPal+ — Retrieval-Augmented Generation
+# =========================================================================
+# The scheduler above decides *when* things happen. This section answers *how*
+# and *how often* questions, and it does so by retrieving from the knowledge/
+# notes rather than letting the model answer from memory. Every answer either
+# cites the sections it used or refuses.
+
+st.subheader("💬 Ask PawPal+")
+st.caption(
+    "Answers come from the notes in `knowledge/` plus your live schedule above — "
+    "not from the model's own memory."
+)
+
+
+@st.cache_resource
+def load_knowledge_base():
+    """Load and index the corpus once per session, not on every rerun.
+
+    Streamlit reruns this whole script on every widget interaction, and reading
+    plus indexing five files each time would be pure waste. cache_resource keeps
+    one shared instance alive.
+    """
+    return CareKnowledgeBase()
+
+
+@st.cache_resource
+def load_llm_client():
+    """Return a Gemini client, or None when GEMINI_API_KEY is not set.
+
+    Returning None instead of raising is what lets the whole section still work
+    in retrieval-only mode without a key.
+    """
+    try:
+        from llm_client import GeminiClient
+
+        return GeminiClient()
+    except RuntimeError:
+        return None
+
+
+setup_logging()      # idempotent, so Streamlit's reruns don't stack handlers
+
+kb = load_knowledge_base()
+llm_client = load_llm_client()
+advisor = CareAdvisor(knowledge_base=kb, llm_client=llm_client)
+
+if not advisor.has_llm:
+    st.info(
+        "No `GEMINI_API_KEY` found, so **retrieval only** mode is available. "
+        "Add a key to a `.env` file to enable RAG answers.",
+        icon="🔑",
+    )
+
+MODE_LABELS = {
+    "RAG (retrieval + LLM)": MODE_RAG,
+    "Retrieval only (no LLM)": MODE_RETRIEVAL,
+    "Naive LLM (no retrieval)": MODE_NAIVE,
+}
+
+col_q, col_mode = st.columns([3, 2])
+with col_q:
+    question = st.text_input(
+        "Your question",
+        value="What time should I give a twice daily medication?",
+        key="rag_question",
+    )
+with col_mode:
+    mode_label = st.selectbox("Answer mode", list(MODE_LABELS), key="rag_mode")
+
+top_k = st.slider(
+    "Snippets to retrieve (top-k)", min_value=1, max_value=6, value=3,
+    help="How many note sections get pulled into the prompt as evidence.",
+)
+
+if st.button("Ask PawPal+", type="primary"):
+    mode = MODE_LABELS[mode_label]
+
+    # Pass the live objects: the advisor expands the query with this pet's
+    # species/medication and summarises the pending tasks into the prompt.
+    with st.spinner("Retrieving notes and composing an answer..."):
+        answer = advisor.ask(question, owner=owner, scheduler=scheduler,
+                             mode=mode, top_k=top_k)
+
+    if answer.mode != mode:
+        st.warning("That mode needs an API key — showing retrieval-only results.")
+
+    # The vet referral gets its own alert block, above everything else. It is
+    # rendered from answer.body below so the banner's markdown doesn't end up
+    # shown literally inside the retrieval-mode code block.
+    if answer.escalated:
+        st.error(ESCALATION_BANNER, icon="⚠️")
+
+    if answer.is_refusal:
+        st.warning(answer.body, icon="🤷")
+    elif answer.mode == MODE_RETRIEVAL:
+        st.markdown("**Retrieved notes**")
+        st.code(answer.body, language="markdown")
+    else:
+        st.markdown(answer.body)
+
+    # Show the evidence. For naive mode there is none, and saying so plainly is
+    # the most useful thing this section does.
+    if answer.snippets:
+        # Confidence scores the retrieved evidence, not the model's belief — a
+        # low number means "the notes barely cover this", which is exactly when
+        # a human should check the sources below before acting.
+        conf_col, note_col = st.columns([1, 3])
+        conf_col.metric("Confidence", f"{answer.confidence:.2f}",
+                        answer.confidence_label)
+        if answer.confidence < LOW_CONFIDENCE:
+            note_col.warning(
+                "Weak match — the notes only loosely cover this question. "
+                "Read the sources below before acting on it.",
+                icon="🔍",
+            )
+        else:
+            note_col.caption(
+                "Confidence reflects how strongly the retrieved notes match your "
+                "question — not how sure the model is. Open the sources to check it."
+            )
+
+        st.caption(f"📚 Grounded in {len(answer.snippets)} note section(s)")
+        for snippet in answer.snippets:
+            with st.expander(f"{snippet.label}  ·  score {snippet.score:.2f}"):
+                st.markdown(snippet.text)
+    elif answer.mode == MODE_NAIVE:
+        st.error(
+            "⚠️ No sources: naive mode skips retrieval entirely, so nothing here "
+            "is checked against your notes. Compare it with RAG mode.",
+        )
+
+with st.expander("What is RAG doing here?"):
+    st.markdown(
+        f"""
+**Retrieve → Augment → Generate.**
+
+1. **Retrieve** — your question is tokenized, stemmed, and matched against the
+   {len(kb.chunks)} note sections in `knowledge/` via an inverted index. Each
+   section is scored on word coverage, heading matches, and repetition; anything
+   below the score floor is dropped so off-topic questions retrieve *nothing*.
+2. **Augment** — the top-k sections are put in the prompt alongside a summary of
+   your real pets and pending tasks, so the answer knows both general pet care
+   guidance and what your day already looks like.
+3. **Generate** — Gemini answers using only that context, cites the sections, and
+   replies "I do not know based on the pet care notes I have" when the notes
+   don't cover it.
+
+Retrieval quality is measured separately with `python rag_evaluation.py`.
+Currently loaded: {kb}
+"""
+    )

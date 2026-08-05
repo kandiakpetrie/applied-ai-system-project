@@ -1,0 +1,71 @@
+$ python rag_evaluation.py --quiet --confidence
+# Confidence distribution across all sample questions.
+# exit code: 0
+----------------------------------------------------------------------
+CareKnowledgeBase — 5 file(s), 30 chunk(s), 455 indexed word(s)
+
+PawPal+ Retrieval Evaluation — bare question
+============================================================
+Questions:        16 (14 with expected sources)
+Hit rate:         1.00  (expected file appeared anywhere in top-k)
+Top-1 accuracy:   0.93  (best-ranked snippet was from an expected file)
+Out-of-corpus:    2/2 correctly retrieved nothing
+============================================================
+
+PawPal+ Retrieval Evaluation — with household context (what the app does)
+============================================================
+Questions:        16 (14 with expected sources)
+Hit rate:         1.00  (expected file appeared anywhere in top-k)
+Top-1 accuracy:   0.93  (best-ranked snippet was from an expected file)
+Out-of-corpus:    2/2 correctly retrieved nothing
+============================================================
+
+Guardrail checks: 11/11 passed
+============================================================
+| Input                                         | Expected   | Actual     | ✓ |
+| --------------------------------------------- | ---------- | ---------- | - |
+|                                               | rejected   | rejected   | ✅ |
+|                                               | rejected   | rejected   | ✅ |
+| aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa... | rejected   | rejected   | ✅ |
+| What is the best pet insurance policy?        | refused    | refused    | ✅ |
+| How do I train my parrot to talk?             | refused    | refused    | ✅ |
+| My cat is vomiting repeatedly, what is wrong? | escalated  | escalated  | ✅ |
+| My dog ate chocolate!                         | escalated  | escalated  | ✅ |
+| She collapsed and is breathing strangely      | escalated  | escalated  | ✅ |
+| How often should I bathe a dog?               | answered   | answered   | ✅ |
+| What time should I give a twice daily medi... | answered   | answered   | ✅ |
+| How many times a day should I feed my cat?    | answered   | answered   | ✅ |
+
+Confidence distribution
+============================================================
+| Question                                      | Conf | Label  | Src |
+| --------------------------------------------- | ---- | ------ | --- |
+| When do I need to call a vet the same day?    | 1.00 | high   |   3 |
+| How long should I walk an adult dog each day? | 0.97 | high   |   3 |
+| Should I walk my dog right after a meal?      | 0.94 | high   |   3 |
+| How often do cats need play sessions?         | 0.89 | high   |   2 |
+| Can I bathe my dog after a flea treatment?    | 0.73 | high   |   3 |
+| How many times a day should I feed my cat?    | 0.69 | medium |   3 |
+| What time should I give a twice daily medi... | 0.69 | medium |   3 |
+| What do I do if I missed a dose?              | 0.66 | medium |   2 |
+| How often is heartworm prevention given?      | 0.60 | medium |   1 |
+| How often should I bathe my dog?              | 0.52 | medium |   3 |
+| Should I brush my pet's teeth every day?      | 0.49 | medium |   3 |
+| Is chocolate dangerous for dogs?              | 0.35 | low    |   3 |
+| How often do nails need trimming?             | 0.29 | low    |   1 |
+| How many meals does a puppy need?             | 0.27 | low    |   2 |
+| What is the best pet insurance policy?        | 0.00 | none   |   0 |
+| How do I train my parrot to talk?             | 0.00 | none   |   0 |
+
+Mean confidence, in-corpus questions:     0.65
+Mean confidence, out-of-corpus questions: 0.00  (0.00 is correct — no evidence)
+Saturated at 1.00: 1/14 answered · flagged low (<0.4): 3
+
+Summary
+------------------------------------------------------------
+arm                                 hit rate     top-1   refused
+bare question                           1.00      0.93       2/2
+with household context                  1.00      0.93       2/2
+guardrail checks                                           11/11
+mean confidence (in-corpus)                                 0.65
+mean confidence (out-of-corpus)                             0.00

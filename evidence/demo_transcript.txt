@@ -1,0 +1,158 @@
+$ python ask_pawpal.py --demo
+# End-to-end advisor run over three fixed questions.
+# exit code: 0
+----------------------------------------------------------------------
+# PawPal+ end-to-end demo transcript
+
+Knowledge base: CareKnowledgeBase — 5 file(s), 30 chunk(s), 455 indexed word(s)
+Demo state: Alice — 2 pet(s), 5 task(s), 5 pending
+LLM available: no (GEMINI_API_KEY not set)
+
+
+## Question 1: How many times a day should I feed my cat?
+
+### Retrieval only (no LLM)
+
+```text
+[FEEDING.md › Cats]
+Adult cats do well on two to three small meals per day. Cats graze naturally,
+so a scheduled feeding of the same measured portion works better than leaving a
+full bowl out all day.
+
+Kittens under six months need three to four meals per day.
+
+Cats drink less water than dogs and benefit from wet food or a water fountain.
+Sudden refusal to eat for more than 24 hours is a reason to call a vet.
+
+---
+
+[MEDICATION.md › Timing and consistency]
+Most daily medications work best at the same time every day. A once-daily dose
+is easiest to remember when it is attached to an existing routine such as the
+morning feeding.
+
+Twice-daily doses should be about 12 hours apart, for example 07:00 and 19:00.
+
+Medication tasks are short (about 2 minutes) but high priority: a missed dose
+matters far more than a delayed grooming session.
+
+---
+
+[FEEDING.md › Feeding around medication]
+Some medications must be given with food and others on an empty stomach. When a
+medication says "give with food", schedule the dose at the same time as a meal
+rather than as a separate task.
+
+If a pet must fast before a procedure, cancel the meals in that window instead
+of marking them complete.
+```
+
+**Confidence:** 0.74 (high)
+
+**Sources:** FEEDING.md › Cats (score 6.30), MEDICATION.md › Timing and consistency (score 5.38), FEEDING.md › Feeding around medication (score 4.97)
+
+_Naive and RAG modes skipped: no `GEMINI_API_KEY` set._
+
+
+## Question 2: When should I fit a walk in around my current tasks?
+
+### Retrieval only (no LLM)
+
+```text
+[FEEDING.md › Feeding around medication]
+Some medications must be given with food and others on an empty stomach. When a
+medication says "give with food", schedule the dose at the same time as a meal
+rather than as a separate task.
+
+If a pet must fast before a procedure, cancel the meals in that window instead
+of marking them complete.
+
+---
+
+[EXERCISE.md › Dog walks]
+Most adult dogs need 30 to 60 minutes of walking per day, which can be split
+into two shorter walks. High-energy breeds need more; flat-faced breeds and
+seniors need less.
+
+Puppies should not be over-walked. A common rule of thumb is about five minutes
+of structured walking per month of age, twice a day.
+
+Walking after a meal should wait roughly 30 minutes to reduce the risk of
+stomach upset.
+
+---
+
+[MEDICATION.md › Heartworm and flea prevention]
+Heartworm prevention is usually a monthly dose given on the same calendar day
+each month. Flea and tick prevention is also typically monthly.
+
+These are recurring monthly tasks rather than daily ones, and they are still
+high priority because a lapse restarts the protection window.
+```
+
+**Confidence:** 0.58 (medium)
+
+**Sources:** FEEDING.md › Feeding around medication (score 4.97), EXERCISE.md › Dog walks (score 4.90), MEDICATION.md › Heartworm and flea prevention (score 2.88)
+
+_Naive and RAG modes skipped: no `GEMINI_API_KEY` set._
+
+
+## Question 3: What is the best pet insurance policy?
+
+### Retrieval only (no LLM)
+
+```text
+I do not know based on the pet care notes I have. I have notes on feeding, medication, exercise, grooming, and vet visits.
+```
+
+**Confidence:** 0.00 (none)
+
+**Sources:** none
+
+_Naive and RAG modes skipped: no `GEMINI_API_KEY` set._
+
+
+## Question 4: My cat is vomiting repeatedly, what is wrong?
+
+### Retrieval only (no LLM)
+
+```text
+⚠️ **This sounds like a health question, not a scheduling one.** PawPal+ organises care tasks and cannot assess symptoms, diagnose, or advise on medication. Contact a veterinarian — same day for a symptom that is new or worsening, immediately for breathing trouble, collapse, seizures, or a suspected poison.
+
+[VET_AND_SAFETY.md › Call a vet the same day]
+Contact a veterinarian promptly for: refusal to eat for more than 24 hours,
+repeated vomiting or diarrhoea, limping that does not improve, a sudden change
+in drinking or urination, or unusual lethargy.
+
+These are not tasks to schedule around. They replace the plan for the day.
+
+---
+
+[FEEDING.md › Cats]
+Adult cats do well on two to three small meals per day. Cats graze naturally,
+so a scheduled feeding of the same measured portion works better than leaving a
+full bowl out all day.
+
+Kittens under six months need three to four meals per day.
+
+Cats drink less water than dogs and benefit from wet food or a water fountain.
+Sudden refusal to eat for more than 24 hours is a reason to call a vet.
+
+---
+
+[EXERCISE.md › Cat play sessions]
+Cats do best with two to three short play sessions per day, about 10 to 15
+minutes each, using a wand toy or chase toy.
+
+An evening play session before the last meal mirrors a natural hunt-eat-sleep
+cycle and helps a cat settle overnight.
+```
+
+**Confidence:** 0.34 (low)
+
+**Sources:** VET_AND_SAFETY.md › Call a vet the same day (score 2.20), FEEDING.md › Cats (score 4.10), EXERCISE.md › Cat play sessions (score 3.25)
+
+_Naive and RAG modes skipped: no `GEMINI_API_KEY` set._
+
+WARNING: mode=retrieval guard=refusal confidence=0.00 (none) sources=[-] q='What is the best pet insurance policy?'
+WARNING: mode=retrieval guard=health-escalation confidence=0.34 (low) sources=[VET_AND_SAFETY.md › Call a vet the same day, FEEDING.md › Cats, EXERCISE.md › Cat play sessions] q='My cat is vomiting repeatedly, what is wrong?'

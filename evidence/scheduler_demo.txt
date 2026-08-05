@@ -1,0 +1,30 @@
+$ python main.py
+# Base-project scheduler demo (unchanged by this extension).
+# exit code: 0
+----------------------------------------------------------------------
+══════════════════════════════════════════════════
+  🔺  Today by PRIORITY
+══════════════════════════════════════════════════
+  07:30   ☐  Feed Buddy               HIGH    ( 5 min)
+  12:00   ☐  Give Buddy medication    HIGH    ( 2 min)
+  12:00   ☐  Give Mochi medication    HIGH    ( 2 min)
+  08:00   ☐  Feed Mochi (breakfast)   MEDIUM  ( 5 min)
+  17:00   ☐  Walk Buddy               MEDIUM  (30 min)
+  18:30   ☐  Feed Mochi (dinner)      MEDIUM  ( 5 min)
+──────────────────────────────────────────────────
+  6 tasks · 49 min total · up next: Feed Buddy
+
+══════════════════════════════════════════════════
+  🕒  Today by TIME
+══════════════════════════════════════════════════
+  07:30   ☐  Feed Buddy               HIGH    ( 5 min)
+  08:00   ☐  Feed Mochi (breakfast)   MEDIUM  ( 5 min)
+  12:00   ☐  Give Buddy medication    HIGH    ( 2 min)
+  12:00   ☐  Give Mochi medication    HIGH    ( 2 min)
+  17:00   ☐  Walk Buddy               MEDIUM  (30 min)
+  18:30   ☐  Feed Mochi (dinner)      MEDIUM  ( 5 min)
+──────────────────────────────────────────────────
+  6 tasks · 49 min total · up next: Feed Buddy
+
+⚠️  Schedule conflict detected:
+  • 2 tasks at 12:00: Give Buddy medication, Give Mochi medication
